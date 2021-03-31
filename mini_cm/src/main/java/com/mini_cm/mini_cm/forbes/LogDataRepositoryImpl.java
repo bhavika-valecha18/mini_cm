@@ -5,7 +5,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -16,7 +16,6 @@ public class LogDataRepositoryImpl implements LogDataRepository
     private JdbcTemplate jdbcTemplate;
 
 
-
     private static final String INSERT_PAGE_VIEW_QUERY = "INSERT INTO pageview(uuid,cid,publisher_url,country,user_agent,timestamp,ad_tag_id,viewability,keywords) VALUES(?,?,?,?,?,?,?,?,?)";
     private static final String INSERT_NOT_LOAD_QUERY = "INSERT INTO adload(adload_uuid,publisher_url,user_agent,country,timestamp,cid,ad_tag_id) VALUES(?,?,?,?,?,?,?)";
     private static final String INSERT_KEYWORD_QUERY = "INSERT INTO keyword(keyword_uuid,keyword_title,user_agent,country,timestamp,cid,ad_tag_id,publisher_url) VALUES(?,?,?,?,?,?,?,?)";
@@ -24,20 +23,22 @@ public class LogDataRepositoryImpl implements LogDataRepository
     private static final String UPDATE_KEYWORD_BY_TITLE = "UPDATE keyword SET keyword_count=? WHERE keyword_title=? AND keyword_uuid=?";
     private static final String INSERT_ADCLICK_INFO = "INSERT INTO adclick(uid,ad_name,keyword,user_agent,country,timestamp,cid,ad_tag_id,publisher_url) VALUES(?,?,?,?,?,?,?,?,?)";
     private static final String INSERT_ADS_DISPLAY = "INSERT INTO adsdisplay(user_id,ad_title,keyword,country,user_agent,timestamp,cid,ad_tag_id,publisher_url) VALUES(?,?,?,?,?,?,?,?,?)";
-    private static final String INSERT_FINAL_ATTRIBUTES="INSERT INTO attributelog(uuid,cid,ad_tag_id,section_id,background_color,keyword_count,keyword_block,font_name,font_style,lid,publisher_url,timestamp,browser,country) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    private static final String INSERT_FINAL_ATTRIBUTES = "INSERT INTO attributelog(uuid,cid,ad_tag_id,section_id,background_color,keyword_count,keyword_block,font_name,font_style,lid,publisher_url,timestamp,browser,country) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
     private static final String GET_CUSTOMER_ATTRIBUTE = "SELECT * FROM customer WHERE cid=?";
-    private static final String GET_ADVERTISER_ATTRIBUTE = "SELECT * FROM adtag WHERE ad_tag_id=?";
-    private static final String GET_SECTIONS="SELECT * from sections WHERE  cid=? order by priority desc";
+    private static final String GET_ADTAG_ATTRIBUTE = "SELECT * FROM adtag WHERE ad_tag_id=?";
+    private static final String GET_SECTIONS = "SELECT * from sections WHERE  cid=? order by priority desc";
 
     @Override
     public void savePublisher(LogData logData, int view, String keywords)
     {
         try
         {
-            jdbcTemplate.update(INSERT_PAGE_VIEW_QUERY, logData.getUuid(), logData.getCid(), logData.getPublisher_url(), logData.getCountry(), logData.getBrowser(), logData.getTimestamp(), logData.getAd_tag_id(), view, keywords);
+            System.out.println("in dao publisher");
+            System.out.println(logData.getTimestamp());
+            jdbcTemplate.update(INSERT_PAGE_VIEW_QUERY, logData.getUuid(), logData.getCid(), logData.getPublisher_url(), logData.getCountry(), logData.getBrowser(), logData.getTimestamp().toString(), logData.getAd_tag_id(), view, keywords);
         } catch (Exception e)
         {
-
+            System.out.println(e);
         }
 
     }
@@ -46,7 +47,7 @@ public class LogDataRepositoryImpl implements LogDataRepository
     @Override
     public void saveAdLoad(LogData logData)
     {
-        jdbcTemplate.update(INSERT_NOT_LOAD_QUERY, logData.getUuid(), logData.getPublisher_url(), logData.getBrowser(), logData.getCountry(), logData.getTimestamp(), logData.getCid(), logData.getAd_tag_id());
+        jdbcTemplate.update(INSERT_NOT_LOAD_QUERY, logData.getUuid(), logData.getPublisher_url(), logData.getBrowser(), logData.getCountry(), logData.getTimestamp().toString(), logData.getCid(), logData.getAd_tag_id());
     }
 
 
@@ -89,7 +90,7 @@ public class LogDataRepositoryImpl implements LogDataRepository
     {
 
 
-        jdbcTemplate.update(INSERT_KEYWORD_QUERY, logData.getUuid(), title, logData.getBrowser(), logData.getCountry(), logData.getTimestamp(), logData.getCid(), logData.getAd_tag_id(), logData.getPublisher_url());
+        jdbcTemplate.update(INSERT_KEYWORD_QUERY, logData.getUuid(), title, logData.getBrowser(), logData.getCountry(), logData.getTimestamp().toString(), logData.getCid(), logData.getAd_tag_id(), logData.getPublisher_url());
     }
 
 
@@ -104,61 +105,107 @@ public class LogDataRepositoryImpl implements LogDataRepository
     public void saveAdClick(LogData logData, String adName, String keyword)
     {
 
-        jdbcTemplate.update(INSERT_ADCLICK_INFO, logData.getUuid(), adName, keyword, logData.getBrowser(), logData.getCountry(), logData.getTimestamp(), logData.getCid(), logData.getAd_tag_id(), logData.getPublisher_url());
+        jdbcTemplate.update(INSERT_ADCLICK_INFO, logData.getUuid(), adName, keyword, logData.getBrowser(), logData.getCountry(), logData.getTimestamp().toString(), logData.getCid(), logData.getAd_tag_id(), logData.getPublisher_url());
     }
 
     @Override
     public void saveAds(LogData logData, String adTitle, String keyword)
     {
-        jdbcTemplate.update(INSERT_ADS_DISPLAY, logData.getUuid(), adTitle, keyword, logData.getBrowser(), logData.getCountry(), logData.getTimestamp(), logData.getCid(), logData.getAd_tag_id(), logData.getPublisher_url());
+        jdbcTemplate.update(INSERT_ADS_DISPLAY, logData.getUuid(), adTitle, keyword, logData.getBrowser(), logData.getCountry(), logData.getTimestamp().toString(), logData.getCid(), logData.getAd_tag_id(), logData.getPublisher_url());
     }
 
     @Override
     public void saveAttributes(LogData logData, Action action, int section_id)
     {
 
-        jdbcTemplate.update(INSERT_FINAL_ATTRIBUTES,logData.getUuid(),logData.getCid(),logData.getAd_tag_id(),section_id,action.getBackground_color(),action.getKeyword_count(),action.getKeyword_block(),action.getFont_name(),action.getFont_style(),action.getLid(),logData.getPublisher_url(),logData.getTimestamp(),logData.getBrowser(),logData.getCountry());
+        jdbcTemplate.update(INSERT_FINAL_ATTRIBUTES,logData.getUuid(),logData.getCid(),logData.getAd_tag_id(),section_id,action.getAttribute().get("background_color"),action.getAttribute().get("keyword_count"),action.getAttribute().get("keyword_block"),action.getAttribute().get("font_name"),action.getAttribute().get("font_style"),action.getAttribute().get("lid"),logData.getPublisher_url(),logData.getTimestamp(),logData.getBrowser(),logData.getCountry());
 
     }
 
     @Override
-    public Action getActionValuesFromSql(String id, String type)
+    public LevelObject getActionValuesFromSql(String id, String type)
     {
-        if (type.equals("customer")){
-            Action action=jdbcTemplate.queryForObject(GET_CUSTOMER_ATTRIBUTE,(rs,rowNum)->{
-                return new Action(rs.getString("background_color"),rs.getInt("keyword_count"),rs.getInt("keyword_block"),rs.getString("font_name"),rs.getString("font_style"),rs.getString("lid"));
+//    {
+        AttributeSet set[] = AttributeSet.values();
 
-            },id);
-            return action;
+        if (type.equals("customer"))
+        {
+            Action cid = new Action();
+            Action finalCid = cid;
+            cid = jdbcTemplate.queryForObject(GET_CUSTOMER_ATTRIBUTE, (rs, rowNum) ->
+            {
+                for (AttributeSet i : set)
+                {
+                    String key = i.name().toString().toLowerCase();
+                    //System.out.println("in dao:" + rs.getString(key));
+                    finalCid.set_value_in_key(key, rs.getString(key));
+                }
+                return finalCid;
 
-        }else if(type.equals("adtag")){
-            System.out.println("adtag");
-            Action action=jdbcTemplate.queryForObject(GET_ADVERTISER_ATTRIBUTE,(rs,rowNum)->{
-                return new Action(rs.getString("background_color"),rs.getInt("keyword_count"),rs.getInt("keyword_block"),rs.getString("font_name"),rs.getString("font_style"),rs.getString("lid"));
+            }, id);
+            return new LevelObject(cid,null);
+        } else if(type.equals("adtag")){
+            Action adtag = new Action();
+           // Action Adtag = adtag;
+            Action finalAdtag = adtag;
+            adtag = jdbcTemplate.queryForObject(GET_ADTAG_ATTRIBUTE, (rs, rowNum) ->
+            {
+                for (AttributeSet i : set)
+                {
+                    String key = i.name().toString().toLowerCase();
+                    //System.out.println("in dao:"+rs.getString(key));
+                    finalAdtag.set_value_in_key(key, rs.getString(key));
+                }
+                return finalAdtag;
 
-            },id);
-            System.out.println("advertiser out");
-            return action;
+            }, id);
+            return new LevelObject(adtag,null);
+        }else if(type.equals("section")){
+            try{
+                List<Section> sections=new ArrayList<>();
+                sections=jdbcTemplate.query(GET_SECTIONS,(rs,rowNum)->{
+                    Section section=new Section();
+                    for (String value : section.s){
+                        String key =value ;
+                        //System.out.println("in dao:" + rs.getString(key));
+                        section.set_value_in_key(key, rs.getString(key));
+                    }
+                    return section;
+                },id);
+                //System.out.println("in dao:"+sections.get(0).section);
+                return new LevelObject(null,sections);
+
+            }catch (EmptyResultDataAccessException exception){
+
+            }
         }
 
+
+
         return null;
+
     }
 
     @Override
-    public List<Section>  getSectionAttributesFromSql(String cid)
+    public List<Section> getSectionAttributesFromSql(String cid)
     {
-        HashMap<String,Action> attribute = new HashMap<String, Action>();
+        List<Section> sections=new ArrayList<>();
 
-        try
-        {
-            return  jdbcTemplate.query(GET_SECTIONS,(rs,rowNum)->{
-                return new Section(rs.getString("country"),rs.getString("browser"),rs.getString("device"),rs.getString("author_name"),rs.getInt("priority"),rs.getString("background_color"),rs.getInt("keyword_count"),rs.getInt("keyword_block"),rs.getString("font_name"),rs.getString("font_style"),rs.getString("lid"),rs.getInt("section_id"));
+        try{
+           return jdbcTemplate.query(GET_SECTIONS,(rs,rowNum)->{
+               Section section=new Section();
+               for (String value : section.s){
+                    String key =value ;
+                    //System.out.println("in dao:" + rs.getString(key));
+                    section.set_value_in_key(key, rs.getString(key));
+                }
+               return section;
             },cid);
 
         }catch (EmptyResultDataAccessException exception){
-            return null;
-        }
 
+        }
+        return null;
     }
 
 }

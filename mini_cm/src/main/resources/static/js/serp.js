@@ -1,5 +1,5 @@
 
-
+let custId="f4546";
  //browser
  navigator.browserSpecs = (function()
 { var ua = navigator.userAgent,
@@ -51,7 +51,7 @@ window.addEventListener("load",adsScript);
                        browser:browser,
                        country:country,
                       timestamp:getTimestamp(),
-                        cid:"f4545",
+                        cid:custId,
                         adTagId:"f1898",
                         publisher_url:publisher_url
 
@@ -93,7 +93,7 @@ window.addEventListener("load",adsScript);
           let time=getTimestamp();
            console.log(time);
             let country="india";
-            let cid="f4545";
+            let cid=custId;
             let adTagId="f1898";
              let publisher_url=document.getElementById("link_url").innerHTML;
 

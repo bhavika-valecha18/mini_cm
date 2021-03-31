@@ -10,9 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.websocket.server.PathParam;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Controller
 
@@ -74,6 +72,7 @@ public class WebController
         List<String> titles=xmlParsing.getTitle();
         List<String> descriptions=xmlParsing.getDescription();
         List<String> urls=xmlParsing.getUrl();
+
         for(int i=0;i<titles.size();i++){
             lists.add(new ListingAds(titles.get(i),descriptions.get(i),urls.get(i)));
 
@@ -95,30 +94,54 @@ public class WebController
     public String responseKeyword(@RequestBody Data data){
 
         RuleObject ruleObject=new RuleObject(data.getCountry(),data.getBrowser(),data.getDevice(),data.getAuthor());
-        action.getAttribute(data.getCustomerId(),"customer");
-        action.getAttribute(data.getAdTagId(),"adtag");
-        action.getSectionAttribute(ruleObject,data.getCustomerId());
-        Action finalSet=action.getFinalSet();
-        int sectionId=action.getSectionId();
-        System.out.println("section:"+sectionId);
+        entityService.getRuleObject(ruleObject);
+        TreeSet<Integer> ts1 = new TreeSet<Integer>();
+        ArrayList<Integer> levels=new ArrayList<>();
+        for(PriorityLevel i:PriorityLevel.values()){
+            levels.add(i.level);
+        }
+        Collections.sort(levels);
 
+        //fetch and override
+        for(int i=0;i<levels.size();i++){
+            String type=PriorityLevel.getNameByCode(levels.get(i)).toString().toLowerCase();
+            entityService.getActionValuesFromSql(data.getId(type),type);
+        }
+
+
+
+
+       // System.out.println("enum"+PriorityLevel.getNameByCode(levels.get(0)));
         String keyword="";
         JSONObject json=null;
         Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         String formattedDate = sdf.format(date);
+
+
         response.add(data);
         try{
-        keyword=responseData.getData(data,finalSet.getLid());
+//        keyword=responseData.getData(data,finalSet.getLid());
+            HashMap<String,String> finalSet=new HashMap<>();
+            finalSet=entityService.getFinalSet();
+            keyword=responseData.getData(data,"224");
 
             json = new JSONObject(keyword);
-            json.put("background_color",finalSet.getBackground_color());
-            json.put("keyword_count",finalSet.getKeyword_count());
-            json.put("keyword_block",finalSet.getKeyword_block());
-            json.put("font_name",finalSet.getFont_name());
-            json.put("font_style",finalSet.getFont_style());
-            json.put("lid",finalSet.getLid());
-            entityService.saveAttributes(new LogData(Long.parseLong(data.getUuid()),data.getBrowser(),data.getCountry(),formattedDate,data.getCustomerId(),data.getAdTagId(),data.getRurl()),new Action(finalSet.getBackground_color(),finalSet.getKeyword_count(),finalSet.getKeyword_block(),finalSet.getFont_name(),finalSet.getFont_style(),finalSet.getLid()),sectionId);
+            json.put("background_color",finalSet.get("background_color"));
+            json.put("keyword_count",finalSet.get("keyword_count"));
+            json.put("keyword_block",finalSet.get("keyword_block"));
+            json.put("font_name",finalSet.get("font_name"));
+            json.put("font_style",finalSet.get("font_style"));
+            json.put("lid",finalSet.get("lid"));
+            Action actionLog=new Action();
+            HashMap<String ,String> attributeLog=new HashMap<>();
+            attributeLog=actionLog.getAttribute();
+            for(String keys:attributeLog.keySet())
+            {
+                actionLog.set_value_in_key(keys,finalSet.get(keys));
+
+            }
+            entityService.saveAttributes(new LogData(Long.parseLong(data.getUuid()),data.getBrowser(),data.getCountry(),formattedDate,data.getCustomerId(),data.getAdTagId(),data.getRurl()),actionLog, entityService.sectionId());
             return json.toString();
         }
         catch (Exception e){
@@ -146,6 +169,9 @@ public class WebController
 
        switch (Integer.parseInt(key)){
            case 0:
+//               System.out.println("in controller publisher");
+//               System.out.println(time);
+             //  System.out.println(browser+country+time+id+adTagId+publisher_url);
                   logDataRepository.savePublisher(new LogData(Long.parseLong(id),browser,country,time,cid,adTagId,publisher_url),view,keywords);
                   break;
 

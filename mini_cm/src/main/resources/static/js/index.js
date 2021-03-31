@@ -4,6 +4,7 @@ let global_check=true;
 let keywords_arr=[];
 let keywords_allwd=true;
 let display_Keywords=false;
+let custId="f4546";
 
 window.addEventListener("load",adScript);
 
@@ -65,7 +66,7 @@ let cookie=getCookie("uuid");
 
 var logData={
     uuid:getCookie("uuid"),
-    cid:"f4545",
+    cid:custId,
     publisher_url:encodeURIComponent(rurl),
     browser:browser,
     country:"india",
@@ -108,8 +109,8 @@ fetch(url, {
             rurl:rurl,
             referrer:ref,
             dtld:domainTld,
-            hint:"recipes",
-            customerId:"f4546",
+            hint:"",
+            customerId:custId,
             browser:browser,
             country:"India",
             uuid:cookie,
@@ -169,7 +170,7 @@ fetch(url, {
                 let keyword=document.createTextNode(key);
                 a.appendChild(keyword);
                  let adTagId="f1898";
-                 let cid="f4545";
+                 let cid=custId;
                 let keys=key.split(" ");
                 let time=getTimestamp();
                 let anchorLink=`http://localhost:8080/keywordsClicked?cookie=${global_cookie}&keyword=${keys.join("-")}&country=${country}&adTagId=${adTagId}&browser=${browser}&cid=${cid}&rurl=${rurl}`;
@@ -204,7 +205,7 @@ $(window).bind("scroll", function() {
             //data=logData;
             let data={
             uuid:getCookie("uuid"),
-            cid:"f4545",
+            cid:custId,
             publisher_url:encodeURIComponent(rurl),
             browser:browser,
             country:"india",

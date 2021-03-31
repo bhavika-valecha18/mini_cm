@@ -24,6 +24,21 @@ public class Data
     private final String device;
 
 
+    public String getId(String type){
+        String id="";
+        switch (type){
+            case "customer":id=getCustomerId();
+                            break;
+            case "adtag":id=getAdTagId();
+                            break;
+            case "section":id=getCustomerId();
+                            break;
+            case "global":id="";
+        }
+        return id;
+    }
+
+
 
 
 }

@@ -20,6 +20,22 @@ public class LogData
     private String ad_tag_id;
     private String publisher_url;
 
+    @Override
+    public String toString()
+    {
+        return "LogData{" +
+                "uuid=" + uuid +
+                ", browser='" + browser + '\'' +
+                ", country='" + country + '\'' +
+                ", timestamp='" + timestamp + '\'' +
+                ", cid='" + cid + '\'' +
+                ", ad_tag_id='" + ad_tag_id + '\'' +
+                ", publisher_url='" + publisher_url + '\'' +
+                '}';
+    }
+
+
+
 
 
 }

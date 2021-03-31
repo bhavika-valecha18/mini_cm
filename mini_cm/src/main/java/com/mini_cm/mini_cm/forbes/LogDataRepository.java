@@ -22,8 +22,8 @@ public interface LogDataRepository
 
 
     //get attributes
-    public Action getActionValuesFromSql(String id, String type);
-    public List<Section>  getSectionAttributesFromSql(String cid);
+    public LevelObject getActionValuesFromSql(String id, String type);
+    public List<Section> getSectionAttributesFromSql(String cid);
 
 
 }
