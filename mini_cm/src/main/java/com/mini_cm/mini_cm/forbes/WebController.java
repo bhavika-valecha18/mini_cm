@@ -93,7 +93,7 @@ public class WebController
     @ResponseBody
     public String responseKeyword(@RequestBody Data data){
 
-        RuleObject ruleObject=new RuleObject(data.getCountry(),data.getBrowser(),data.getDevice(),data.getAuthor());
+        RuleObject ruleObject=new RuleObject(data.getCountry(),data.getBrowser(),data.getDevice(),null);
         entityService.getRuleObject(ruleObject);
         TreeSet<Integer> ts1 = new TreeSet<Integer>();
         ArrayList<Integer> levels=new ArrayList<>();
@@ -124,6 +124,7 @@ public class WebController
 //        keyword=responseData.getData(data,finalSet.getLid());
             HashMap<String,String> finalSet=new HashMap<>();
             finalSet=entityService.getFinalSet();
+            System.out.println("action set"+finalSet);
             keyword=responseData.getData(data,"224");
 
             json = new JSONObject(keyword);

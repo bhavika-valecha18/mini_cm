@@ -57,14 +57,18 @@ public class EntityService
                 action.overrideAttributes(adtagAttribute.getAction());break;
 
             case "section":LevelObject sectionAttribute=logDataRepository.getActionValuesFromSql(id,type);
+              //  System.out.println("ruleobj:"+ruleObject);
                 List<Section> sections=sectionAttribute.getSection();
-                System.out.println(sections);
+               // System.out.println("new sections:"+sections);
                 Action section_set=new Action();
-                section_set=Section.finalSectionAttribute(sectionAttribute.getSection(),ruleObject);
-                System.out.println("section"+sections.size());
-                System.out.println(sections.get(0));
-                System.out.println("color:"+section_set.getAttribute().get("background_color"));
+                //section_set=Section.finalSectionAttribute(sectionAttribute.getSection(),ruleObject);
+               // System.out.println("firse check sections:"+sections);
+                section_set=Section.finalActionSet(ruleObject,sections);
+              //  System.out.println("section"+sections.size());
+                //System.out.println(sections.get(0));
+                //System.out.println("color:"+section_set.getAttribute().get("background_color"));
                 action.overrideAttributes(section_set);
+                //action.overrideAttributes(section_set);
                 break;
 
         }

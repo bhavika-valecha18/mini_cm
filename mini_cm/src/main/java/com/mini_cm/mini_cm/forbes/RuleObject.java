@@ -16,6 +16,18 @@ public class RuleObject
     private String country;
     private String browser;
     private String device;
+
+    @Override
+    public String toString()
+    {
+        return "RuleObject{" +
+                "country='" + country + '\'' +
+                ", browser='" + browser + '\'' +
+                ", device='" + device + '\'' +
+                ", author_name='" + author_name + '\'' +
+                '}';
+    }
+
     private String author_name;
 
 

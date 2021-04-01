@@ -4,6 +4,7 @@ package com.mini_cm.mini_cm.forbes;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 
 @Service
@@ -12,6 +13,9 @@ public class Section
     public HashMap<String,String> section=new HashMap<>();
     Set<String> s=new HashSet();
    static AttributeSet action_set[]=AttributeSet.values();
+    RuleSet rule_set[]=RuleSet.values();
+    SectionSet set[]=SectionSet.values();
+    private static int  sectionId=-1;
 
     @Override
     public String toString()
@@ -21,9 +25,7 @@ public class Section
                 '}';
     }
 
-    RuleSet rule_set[]=RuleSet.values();
-    SectionSet set[]=SectionSet.values();
-    private static int  sectionId=-1;
+
 
     public Section()
     {
@@ -47,6 +49,7 @@ public class Section
         //section
         for(SectionSet i:set)
         {
+           // System.out.println(i.name().toString().toLowerCase());
             s.add(i.name().toString().toLowerCase());
             section.put(i.name().toString().toLowerCase(),null);
 
@@ -186,12 +189,92 @@ public class Section
         return null;
     }
 
-    public Action finalActionSet(RuleObject ruleObject,List<Section> sections){
-    String rule="";
+    public static Action finalActionSet(RuleObject ruleObject,List<Section> sections)
+    {
+        Action action = new Action();
+        boolean check;
+
+        System.out.println("in final section check");
+        String country = ruleObject.getCountry();
+        String browser = ruleObject.getBrowser();
+        String device = ruleObject.getDevice();
+        String author = ruleObject.getAuthor_name();
+
+        for (Section s : sections)
+        {
+            check=true;
+            System.out.println("in" + s);
+
+            if (country != null)
+            {
+                //System.out.println(country+"regex browser:"+s.section.get("exclude_country"));
+                //System.out.println("match:"+Pattern.matches(s.section.get("exclude_country").toString(),country));
+                if ( !( (s.section.get("include_country") == null || Pattern.matches(s.section.get("include_country").toString(), country)) && (s.section.get("exclude_country") == null || !(Pattern.matches(s.section.get("exclude_country").toString(), country)))))
+                {
+
+                    check = false;
+
+                }
+            }
+
+            //browser
+            if (browser != null)
+            {
+
+                if ( !((s.section.get("include_browser") == null || Pattern.matches(s.section.get("include_browser").toString(), browser)) && (s.section.get("exclude_browser") == null || !(Pattern.matches(s.section.get("exclude_browser").toString(), browser)))))
+                {
+                    check = false;
+
+                }
+            }
+
+            //device
+            if (device != null)
+            {
+
+                if ( !((s.section.get("include_device") == null || Pattern.matches(s.section.get("include_device").toString(), device)) && (s.section.get("exclude_device") == null || !(Pattern.matches(s.section.get("exclude_device").toString(), device)))))
+                {
+                    check = false;
+
+                }
+            }
+
+            //author
+            if (author != null)
+            {
+
+
+                if (!((s.section.get("include_author_name") == null || Pattern.matches(s.section.get("include_author").toString(), author)) && (s.section.get("exclude_author_name") == null || !(Pattern.matches(s.section.get("exclude_author").toString(), author)))))
+                {
+                    check = false;
+
+                }
+            }
+
+       // System.out.println("out");
+            System.out.println(check);
+        if (check)
+        {
+
+            sectionId = Integer.parseInt(s.section.get("priority"));
+            System.out.println("final priority:" + sectionId);
+            System.out.println("final settt" + s);
+
+            for (AttributeSet i : action_set)
+            {
+                String k = i.name().toString().toLowerCase();
+                //System.out.println("in dao:" + rs.getString(key));
+                action.set_value_in_key(k, s.section.get(k));
+            }
+            break;
+        }
+
+    }
 
 
 
-        return null;
+
+        return action;
     }
 
     public static int getSectionId(){

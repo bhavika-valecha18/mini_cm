@@ -26,7 +26,7 @@ public class LogDataRepositoryImpl implements LogDataRepository
     private static final String INSERT_FINAL_ATTRIBUTES = "INSERT INTO attributelog(uuid,cid,ad_tag_id,section_id,background_color,keyword_count,keyword_block,font_name,font_style,lid,publisher_url,timestamp,browser,country) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
     private static final String GET_CUSTOMER_ATTRIBUTE = "SELECT * FROM customer WHERE cid=?";
     private static final String GET_ADTAG_ATTRIBUTE = "SELECT * FROM adtag WHERE ad_tag_id=?";
-    private static final String GET_SECTIONS = "SELECT * from sections WHERE  cid=? order by priority desc";
+    private static final String GET_SECTIONS = "SELECT * from section WHERE  customer_id=? order by priority desc";
 
     @Override
     public void savePublisher(LogData logData, int view, String keywords)
