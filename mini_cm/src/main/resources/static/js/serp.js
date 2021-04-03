@@ -1,5 +1,5 @@
 
-let custId="f4546";
+let custId="f4545";
  //browser
  navigator.browserSpecs = (function()
 { var ua = navigator.userAgent,
@@ -19,7 +19,6 @@ window.addEventListener("load",adsScript);
  function adsScript(){
 
 
-       console.log("in");
 
            let keyword=document.getElementById("keyword").innerHTML;
            let arr=keyword.split(" ");
@@ -27,24 +26,17 @@ window.addEventListener("load",adsScript);
 
             let publisher_url=document.getElementById("link_url").innerHTML;
 
-           //firePixel(serpLog,4);
 
+         let data=document.getElementById("adData");
+         let len=data.getElementsByTagName('div').length;
+         let ad_content=data.getElementsByTagName('div');
 
-           //log all ad details
-         // for(i=0;i<4;i+=1){
-         let a=document.getElementById("adData");
-         let b=a.getElementsByTagName('div').length;
-         let c=a.getElementsByTagName('div');
-         console.log(c[0].querySelector('a').innerHTML);
-           console.log(document.getElementById("adData"));
-           console.log(document.querySelector("#adData >div").length);
-           console.log(b);
            let adsArr=[];
-           for(i=0;i<b;i++){
-                 adsArr.push(c[i].querySelector('a').innerHTML);
+           for(i=0;i<len;i++){
+                 adsArr.push(ad_content[i].querySelector('a').innerHTML);
            }
            ads=adsArr;
-           console.log(adsArr.toString());
+
             let adsLog={
                       uuid:document.getElementById("cookie").innerHTML,
                        keyword_title:key,
@@ -56,11 +48,12 @@ window.addEventListener("load",adsScript);
                         publisher_url:publisher_url
 
                       };
+                      //log ads display
                       firePixel(adsLog,1);
 
 
  }// end of adsscript
-        //}
+
 
 
 
@@ -74,24 +67,23 @@ window.addEventListener("load",adsScript);
          srcUrl+="&"+"ads"+"="+ads[i];
         }
 
-        console.log(srcUrl);
+
         new Image().src=srcUrl;
         }
 
         function adClick(a){
          let title=a.innerHTML;
          let t=`${title}`;
-           console.log(`${title}`);
+
            let keyword=document.getElementById("keyword").innerHTML;
           let arr=keyword.split(" ");
           let key=arr[2].split(":")[1];
-          console.log(key);
+
          let adUrl=document.getElementById("url").innerHTML;
          let uuid=document.getElementById("cookie").innerHTML;
-         console.log(adUrl);
-         console.log(uuid);
+
           let time=getTimestamp();
-           console.log(time);
+
             let country="india";
             let cid=custId;
             let adTagId="f1898";
@@ -105,11 +97,11 @@ window.addEventListener("load",adsScript);
                 return response.text();
               })
               .then(function(text) {
-                console.log('Request successful', text);
+
                 window.open(text);
               })
               .catch(function(error) {
-                log('Request failed', error)
+                console.log(error);
               });
 
 

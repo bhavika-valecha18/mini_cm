@@ -1,4 +1,4 @@
-package com.mini_cm.mini_cm.forbes;
+package com.mini_cm.mini_cm.model;
 
 
 import lombok.AllArgsConstructor;

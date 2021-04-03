@@ -1,4 +1,4 @@
-package com.mini_cm.mini_cm.forbes;
+package com.mini_cm.mini_cm.service;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -11,7 +11,7 @@ import java.util.List;
 
 
 @Service
-public class XmlParsing
+public class XmlParsingService
 {
     List<String> title=new ArrayList<>();
     List<String> description=new ArrayList<>();
@@ -23,10 +23,10 @@ public class XmlParsing
 
         try
         {
-            // File inputFile = new File("C:\\Users\\bhavika.v\\Downloads\\mini_cm\\mini_cm\\src\\main\\java\\com\\mini_cm\\mini_cm\\forbes\\AdsApiData.xml");
+
             SAXReader reader = new SAXReader();
 
-            Document document = (Document) reader.read("C:\\Users\\bhavika.v\\Downloads\\mini_cm\\mini_cm\\src\\main\\java\\com\\mini_cm\\mini_cm\\forbes\\AdsApiData.xml");
+            Document document = (Document) reader.read("C:\\Users\\bhavika.v\\Downloads\\mini_cm\\mini_cm\\src\\main\\resources\\AdsApi.xml");
             //System.out.println("Root element:" + ((org.dom4j.Document) document).getRootElement().getName());
 
             List<Node> nodes = document.selectNodes("/Results/ResultSet/Listing");

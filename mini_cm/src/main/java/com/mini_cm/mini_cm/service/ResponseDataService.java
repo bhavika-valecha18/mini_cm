@@ -1,17 +1,26 @@
-package com.mini_cm.mini_cm.forbes;
+package com.mini_cm.mini_cm.service;
 
 
+import com.mini_cm.mini_cm.model.Data;
+import com.mini_cm.mini_cm.model.ListingAds;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 
-@Service
+import java.util.ArrayList;
+import java.util.List;
 
-public class ResponseData
+@Service
+public class ResponseDataService
 {
+    @Autowired
+    private XmlParsingService xmlParsingService;
     RestTemplate restTemplate = new RestTemplate();
-    public String getData(Data data,String lid)
+    public JSONObject getData(Data data, String lid) throws JSONException
     {
         DefaultUriBuilderFactory uriFactory = new DefaultUriBuilderFactory();
         uriFactory.setEncodingMode(DefaultUriBuilderFactory.EncodingMode.NONE);
@@ -32,14 +41,29 @@ public class ResponseData
           kbb+="&lid=224";
       }
 
-        ResponseEntity<String> response
-                = restTemplate.getForEntity(kbb, String.class);
-        String user=response.getBody();
+        ResponseEntity<String> response = restTemplate.getForEntity(kbb,String.class);
+       String user=response.getBody();
+        JSONObject kbb_response = new JSONObject(user);
 
 
-            return user;
+            return kbb_response;
 
     }
+
+    public List<ListingAds> getSerpData(){
+        List<ListingAds> lists = new ArrayList<ListingAds>();
+        xmlParsingService.xmlData();
+        List<String> titles= xmlParsingService.getTitle();
+        List<String> descriptions= xmlParsingService.getDescription();
+        List<String> urls= xmlParsingService.getUrl();
+
+        for(int i=0;i<titles.size();i++){
+            lists.add(new ListingAds(titles.get(i),descriptions.get(i),urls.get(i)));
+
+        }
+        return lists;
+    }
+
 
 
 
