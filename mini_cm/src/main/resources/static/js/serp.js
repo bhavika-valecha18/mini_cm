@@ -1,5 +1,5 @@
 
-let custId="f4545";
+let custId="";
  //browser
  navigator.browserSpecs = (function()
 { var ua = navigator.userAgent,
@@ -18,28 +18,28 @@ window.addEventListener("load",adsScript);
 
  function adsScript(){
 
-
-
+           custId=document.querySelector('media-net').getAttribute('cid');
            let keyword=document.getElementById("keyword").innerHTML;
            let arr=keyword.split(" ");
            let key=arr[2].split(":")[1];
-
-            let publisher_url=document.getElementById("link_url").innerHTML;
-
-
-         let data=document.getElementById("adData");
-         let len=data.getElementsByTagName('div').length;
-         let ad_content=data.getElementsByTagName('div');
+           let publisher_url=document.getElementById("link_url").innerHTML;
+           let data=document.getElementById("adData");
+           let len=data.getElementsByTagName('div').length;
+           let ad_content=data.getElementsByTagName('div');
+         if(len>10){
+            for(i=10;i<len;i++){
+            ad_content[i].innerHTML="";
+            }
+         }
 
            let adsArr=[];
            for(i=0;i<len;i++){
                  adsArr.push(ad_content[i].querySelector('a').innerHTML);
            }
            ads=adsArr;
-
             let adsLog={
                       uuid:document.getElementById("cookie").innerHTML,
-                       keyword_title:key,
+                       keyword:key,
                        browser:browser,
                        country:country,
                       timestamp:getTimestamp(),
@@ -54,24 +54,20 @@ window.addEventListener("load",adsScript);
 
  }// end of adsscript
 
-
-
-
-
-        function firePixel(obj,audit_key){
+     function firePixel(obj,audit_key){
         let srcUrl="http://localhost:8080/log?auditKey="+audit_key;
         for(key in obj){
         srcUrl+="&"+key+"="+obj[key];
         }
         for(i=0;i<ads.length;i++){
-         srcUrl+="&"+"ads"+"="+ads[i];
+         srcUrl+="&"+"adsDisplay"+"="+ads[i];
         }
 
 
         new Image().src=srcUrl;
         }
 
-        function adClick(a){
+       function adClick(a){
          let title=a.innerHTML;
          let t=`${title}`;
 
@@ -89,7 +85,7 @@ window.addEventListener("load",adsScript);
             let adTagId="f1898";
              let publisher_url=document.getElementById("link_url").innerHTML;
 
-           let url=`http://localhost:8080/adClickData?uuid=${uuid}&keyword=${key}&adUrl=${adUrl}&time=${time}&country=${country}&browser=${browser}&title=${t}&cid=${cid}&adTagId=${adTagId}&publisher_url=${publisher_url}`;
+           let url=`http://localhost:8080/adClickData?uuid=${uuid}&keyword=${key}&adUrl=${adUrl}&timestamp=${time}&country=${country}&browser=${browser}&adTitle=${t}&cid=${cid}&adTagId=${adTagId}&publisher_url=${publisher_url}`;
 
 
             fetch(url, {mode: 'cors'})
@@ -104,15 +100,9 @@ window.addEventListener("load",adsScript);
                 console.log(error);
               });
 
+     }//end of adClick
 
-
-
-
-
-
-        }//end of adClick
-
-        function getTimestamp(){
+      function getTimestamp(){
         let date=new Date();
         let p1=date.getFullYear()+"-"+date.getMonth()+"-"+date.getDate();
         let p2=date.getHours()+":"+date.getMinutes()+":"+date.getSeconds();

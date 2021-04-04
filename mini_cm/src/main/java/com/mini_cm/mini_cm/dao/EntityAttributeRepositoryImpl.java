@@ -17,44 +17,45 @@ public class EntityAttributeRepositoryImpl implements EntityAttributeRepository
     private JdbcTemplate jdbcTemplate;
 
 
-    private static final String GET_CUSTOMER_ATTRIBUTE = "SELECT * FROM customer WHERE cid=?";
-    private static final String GET_ADTAG_ATTRIBUTE = "SELECT * FROM adtag WHERE ad_tag_id=?";
-    private static final String GET_SECTIONS = "SELECT * from sections WHERE  cid=? order by priority desc";
-    private static final String GET_GLOBAL_ATTRIBUTE_SET="SELECT * from global_attribute_set order by global_id desc limit 1";
+    private  final String GET_CUSTOMER_ATTRIBUTE = "SELECT * FROM customer WHERE cid=?";
+    private  final String GET_ADTAG_ATTRIBUTE = "SELECT * FROM adtag WHERE ad_tag_id=?";
+    private  final String GET_SECTIONS = "SELECT * from sections WHERE  cid=? order by priority desc";
+    private  final String GET_GLOBAL_ATTRIBUTE_SET="SELECT * from global_attribute_set order by global_id desc limit 1";
 
     @Override
     public LevelObject getActionValuesFromSql(String id, PriorityLevel type)
     {
-//    {
+
         AttributeSet set[] = AttributeSet.values();
 
         if (type.equals(PriorityLevel.CUSTOMER))
         {
-            Action customerAttributeSet = new Action();
-            Action finalCid = customerAttributeSet;
-            customerAttributeSet = jdbcTemplate.queryForObject(GET_CUSTOMER_ATTRIBUTE, (rs, rowNum) ->
+            try
             {
-                for (AttributeSet i : set)
+                Action customerAttributeSet = new Action();
+                Action finalCid = customerAttributeSet;
+                customerAttributeSet = jdbcTemplate.queryForObject(GET_CUSTOMER_ATTRIBUTE, (rs, rowNum) ->
                 {
-                    String key = i.name().toString().toLowerCase();
-                    //System.out.println("in dao:" + rs.getString(key));
-                    finalCid.set_value_in_key(i, rs.getString(i.name().toString().toLowerCase()));
-                }
-                return finalCid;
+                    for (AttributeSet i : set)
+                    {
+                        finalCid.set_value_in_key(i, rs.getString(i.name().toString().toLowerCase()));
+                    }
+                    return finalCid;
 
-            }, id);
-            return new LevelObject(customerAttributeSet, null);
+                }, id);
+                return new LevelObject(customerAttributeSet, null);
+            }catch (Exception exception){
+                System.out.println(exception);
+            }
         } else if (type.equals(PriorityLevel.ADTAG))
         {
             Action adtag = new Action();
-            // Action Adtag = adtag;
+
             Action finalAdtag = adtag;
             adtag = jdbcTemplate.queryForObject(GET_ADTAG_ATTRIBUTE, (rs, rowNum) ->
             {
                 for (AttributeSet i : set)
                 {
-                    //String key = i.name().toString().toLowerCase();
-                    //System.out.println("in dao:"+rs.getString(key));
                     finalAdtag.set_value_in_key(i, rs.getString(i.name().toString().toLowerCase()));
                 }
                 return finalAdtag;
@@ -69,15 +70,13 @@ public class EntityAttributeRepositoryImpl implements EntityAttributeRepository
                 sections = jdbcTemplate.query(GET_SECTIONS, (rs, rowNum) ->
                 {
                     Section section = new Section();
-                    for (Enum key : section.s)
+                    for (Enum key : section.getSectionAttributeSet())
                     {
-                        //String key = value;
-                        //System.out.println("in dao:" + rs.getString(key));
                         section.set_value_in_key(key, rs.getString(key.name().toString().toLowerCase()));
                     }
                     return section;
                 }, id);
-                //System.out.println("in dao:"+sections.get(0).section);
+
                 return new LevelObject(null, sections);
 
             } catch (EmptyResultDataAccessException exception)
@@ -91,8 +90,6 @@ public class EntityAttributeRepositoryImpl implements EntityAttributeRepository
             {
                 for (AttributeSet i : set)
                 {
-                    String key = i.name().toString().toLowerCase();
-                    //System.out.println("in dao:" + rs.getString(key));
                     defaultSet.set_value_in_key(i, rs.getString(i.name().toString().toLowerCase()));
                 }
                 return defaultSet;

@@ -17,6 +17,16 @@ public class Data
     private String  dtld;
     private String  hint;
 
-
-
+    @Override
+    public String toString()
+    {
+        return "Data{" +
+                "author='" + author + '\'' +
+                ", domain='" + domain + '\'' +
+                ", rurl='" + rurl + '\'' +
+                ", referrer='" + referrer + '\'' +
+                ", dtld='" + dtld + '\'' +
+                ", hint='" + hint + '\'' +
+                '}';
+    }
 }

@@ -7,30 +7,25 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Pattern;
 
 
 @Service
 public class EntityService
 {
     @Autowired
-    public EntityAttributeRepository entityAttributeRepository;
+    private EntityAttributeRepository entityAttributeRepository;
 
     Action action=new Action();
     HashMap<Enum,String> overrideactions=action.getAttribute();
     CommonRequestDTO commonRequestDTO =null;
+    int sectionId=0;
 
 
-    //get customer and adtag attributes
-    public void getActionValuesFromSql(String id, PriorityLevel type,CommonRequestDTO commonRequestDTO,String author_name){
+    //get  attribute set from db
+    private void getActionValuesFromSql(String id, PriorityLevel type,CommonRequestDTO commonRequestDTO,String author_name){
         switch (type){
             case GLOBAL: Action global=new Action();
-
-//                global.set_value_in_key(AttributeSet.BACKGROUND_COLOR,"blue");
-//                global.set_value_in_key(AttributeSet.KEYWORD_COUNT,"7");
-//                global.set_value_in_key(AttributeSet.KEYWORD_BLOCK,"0");
-//                global.set_value_in_key(AttributeSet.FONT_NAME,"arial");
-//                global.set_value_in_key(AttributeSet.FONT_STYLE,"normal");
-//                global.set_value_in_key(AttributeSet.LID,null);
                 LevelObject globalAttribute=entityAttributeRepository.getActionValuesFromSql(id,type);
                 overrideAttributes(globalAttribute.getAction());
                 break;
@@ -47,7 +42,7 @@ public class EntityService
             case SECTION:LevelObject sectionAttribute=entityAttributeRepository.getActionValuesFromSql(id,type);
                         List<Section> sections=sectionAttribute.getSection();
                         Action section_set=new Action();
-                        section_set=Section.finalActionSet(commonRequestDTO,author_name,sections);
+                        section_set=finalSectionSet(commonRequestDTO,author_name,sections);
                         overrideAttributes(section_set);
                         break;
 
@@ -61,14 +56,11 @@ public class EntityService
 
 
     public HashMap<Enum,String> getFinalSet(){
-        HashMap<Enum,String> finalSet=action.getAttribute();
-
-
         return overrideactions;
     }
 
     public int sectionId(){
-        return Section.getSectionId();
+        return sectionId;
     }
 
     public void callEntities(CommonRequestDTO commonRequestDTO, String author_name){
@@ -82,7 +74,7 @@ public class EntityService
 
     }
 
-    public String getId(PriorityLevel type){
+    private String getId(PriorityLevel type){
         String id="";
         switch (type){
             case CUSTOMER:id= commonRequestDTO.getCustomerId();
@@ -96,7 +88,87 @@ public class EntityService
         return id;
     }
 
-    public void overrideAttributes(Action obj)
+    private   Action finalSectionSet(CommonRequestDTO commonRequestDTO,String author_name,List<Section> sections)
+    {
+        Action action = new Action();
+        boolean check;
+        String country = commonRequestDTO.getCountry();
+        String browser = commonRequestDTO.getBrowser();
+        String device = commonRequestDTO.getDevice();
+        String author = author_name;
+
+        for (Section s : sections)
+        {
+            check=true;
+
+            if (country != null)
+            {
+                if ( !(s.getAttribute().get(RuleSet.COUNTRY) == null || Pattern.matches(s.getAttribute().get(RuleSet.COUNTRY).toString(), country.toLowerCase())))
+                {
+                    check = false;
+                    continue;
+
+                }
+            }
+
+            //browser
+            if (browser != null)
+            {
+
+                if ( !(s.getAttribute().get(RuleSet.BROWSER) == null || Pattern.matches(s.getAttribute().get(RuleSet.BROWSER).toString(), browser.toLowerCase())))
+                {
+                    check = false;
+                    continue;
+
+                }
+            }
+
+            //device
+            if (device != null)
+            {
+
+                if ( !(s.getAttribute().get(RuleSet.DEVICE) == null || Pattern.matches(s.getAttribute().get(RuleSet.DEVICE).toString(), device.toLowerCase())))
+                {
+                    check = false;
+                    continue;
+
+                }
+            }
+
+            //author
+            if (author != null)
+            {
+                if (!(s.getAttribute().get(RuleSet.AUTHOR_NAME) == null || Pattern.matches(s.getAttribute().get(RuleSet.AUTHOR_NAME).toString(), author.toLowerCase())))
+                {
+                    check = false;
+                    continue;
+
+                }
+            }
+
+
+            if (check)
+            {
+
+                 sectionId = Integer.parseInt(s.getAttribute().get(SectionSet.PRIORITY));
+                for (AttributeSet i : AttributeSet.values())
+                {
+                    action.set_value_in_key(i, s.getAttribute().get(i));
+                }
+                break;
+            }
+
+        }
+
+
+
+
+        return action;
+    }
+
+
+
+    private void overrideAttributes(Action obj)
     {
         if (obj != null)
         {

@@ -29,24 +29,6 @@ public class Action
         return attribute_set;
     }
 
-    //todo get actions object
-
-    //override final action set
-    //todo put in entity service
-//    public void overrideAttributes(Action obj)
-//    {
-//        if (obj != null)
-//        {
-//            for (Enum key : actions.keySet())
-//            {
-//                if (obj.actions.get(key) != null)
-//                {
-//                    this.actions.put(key,obj.actions.get(key));
-//                }
-//            }
-//        }
-//    }
-
 
 
 

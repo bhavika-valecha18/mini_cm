@@ -16,12 +16,12 @@ public class LogDataRepositoryImpl implements LogDataRepository
     private JdbcTemplate jdbcTemplate;
 
 
-    private static final String INSERT_PAGE_VIEW_QUERY = "INSERT INTO pageview(uuid,cid,publisher_url,country,user_agent,timestamp,ad_tag_id,viewability,keywords) VALUES(?,?,?,?,?,?,?,?,?)";
-    private static final String INSERT_NOT_LOAD_QUERY = "INSERT INTO adload(adload_uuid,publisher_url,user_agent,country,timestamp,cid,ad_tag_id) VALUES(?,?,?,?,?,?,?)";
-    private static final String INSERT_KEYWORD_QUERY = "INSERT INTO keyword(keyword_uuid,keyword_title,user_agent,country,timestamp,cid,ad_tag_id,publisher_url) VALUES(?,?,?,?,?,?,?,?)";
-    private static final String INSERT_ADCLICK_INFO = "INSERT INTO adclick(uid,ad_name,keyword,user_agent,country,timestamp,cid,ad_tag_id,publisher_url) VALUES(?,?,?,?,?,?,?,?,?)";
-    private static final String INSERT_ADS_DISPLAY = "INSERT INTO adsdisplay(user_id,ad_title,keyword,country,user_agent,timestamp,cid,ad_tag_id,publisher_url) VALUES(?,?,?,?,?,?,?,?,?)";
-    private static final String INSERT_FINAL_ATTRIBUTES = "INSERT INTO attributelog(uuid,cid,ad_tag_id,section_id,background_color,keyword_count,keyword_block,font_name,font_style,lid,publisher_url,timestamp,browser,country) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    private  final String INSERT_PAGE_VIEW_QUERY = "INSERT INTO pageview(uuid,cid,publisher_url,country,user_agent,timestamp,ad_tag_id,viewability,keywords) VALUES(?,?,?,?,?,?,?,?,?)";
+    private  final String INSERT_NOT_LOAD_QUERY = "INSERT INTO adload(adload_uuid,publisher_url,user_agent,country,timestamp,cid,ad_tag_id) VALUES(?,?,?,?,?,?,?)";
+    private  final String INSERT_KEYWORD_QUERY = "INSERT INTO keyword(keyword_uuid,keyword_title,user_agent,country,timestamp,cid,ad_tag_id,publisher_url) VALUES(?,?,?,?,?,?,?,?)";
+    private  final String INSERT_ADCLICK_INFO = "INSERT INTO adclick(uid,ad_name,keyword,user_agent,country,timestamp,cid,ad_tag_id,publisher_url) VALUES(?,?,?,?,?,?,?,?,?)";
+    private  final String INSERT_ADS_DISPLAY = "INSERT INTO adsdisplay(user_id,ad_title,keyword,country,user_agent,timestamp,cid,ad_tag_id,publisher_url) VALUES(?,?,?,?,?,?,?,?,?)";
+    private  final String INSERT_FINAL_ATTRIBUTES = "INSERT INTO attributelog(uuid,cid,ad_tag_id,section_id,background_color,keyword_count,keyword_block,font_name,font_style,lid,publisher_url,timestamp,browser,country) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
 
     @Override

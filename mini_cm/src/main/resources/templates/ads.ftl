@@ -17,6 +17,7 @@
             <div id="keyword">Sponsered Results for:${keywordSelected}</div>
             <div id="link_url" style="display:none;">${rurl}</div>
             <div id="cookie" style="display:none;">${cookie}</div>
+            <#assign ads = " ">
             <div id="adData">
             <#list listingAds as ads>
             <div id="container" >
@@ -25,7 +26,9 @@
                 <p>${ads.description}</p>
             </div>
 
-        </#list>
+          </#list>
+
+
         </div>
 
         </div>

@@ -16,7 +16,7 @@ public class XmlParsingService
     List<String> title=new ArrayList<>();
     List<String> description=new ArrayList<>();
     List<String> adLink=new ArrayList<>();
-
+    private final String path="C:\\Users\\bhavika.v\\Downloads\\mini_cm\\mini_cm\\src\\main\\resources\\AdsApi.xml";
 
     public void xmlData()
     {
@@ -25,21 +25,15 @@ public class XmlParsingService
         {
 
             SAXReader reader = new SAXReader();
-
-            Document document = (Document) reader.read("C:\\Users\\bhavika.v\\Downloads\\mini_cm\\mini_cm\\src\\main\\resources\\AdsApi.xml");
-            //System.out.println("Root element:" + ((org.dom4j.Document) document).getRootElement().getName());
-
+            Document document = (Document) reader.read(path);
             List<Node> nodes = document.selectNodes("/Results/ResultSet/Listing");
 
             for (Node node : nodes)
             {
-                //listingAds=new ListingAds(node.valueOf("@title"),node.valueOf("@description"),node.selectSingleNode("ClickUrl").getText());
                 title.add(node.valueOf("@title"));
                 description.add(node.valueOf("@description"));
                 adLink.add(node.selectSingleNode("ClickUrl").getText());
             }
-            //System.out.println("1");
-
 
         } catch (DocumentException e)
         {

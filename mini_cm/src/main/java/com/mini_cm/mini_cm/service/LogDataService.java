@@ -16,8 +16,7 @@ public class LogDataService
     @Autowired
     private LogDataRepository logDataRepository;
 
-//    @Autowired
-//    private LogData logData;
+
 
     public void logPageView(String uuid,String browser, String country,String timestamp,String cid,String adTagId,String publisher_url,int viewability,String keywords){
         logDataRepository.savePublisher(new LogData(Long.parseLong(uuid),browser,country,timestamp,cid,adTagId,publisher_url),viewability,keywords);
@@ -25,17 +24,11 @@ public class LogDataService
 
     public void logKeywordClick(String uuid,String browser, String country,String cid,String adTagId,String publisher_url,String keyword){
         String keywordTitle=keyword.replace("-"," ");
-        Date date = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-        String formattedDate = sdf.format(date);
-        logDataRepository.saveKeyword(new LogData(Long.parseLong(uuid),browser,country,formattedDate,cid,adTagId,publisher_url),keywordTitle);
+        logDataRepository.saveKeyword(new LogData(Long.parseLong(uuid),browser,country,getTimeStamp(),cid,adTagId,publisher_url),keywordTitle);
     }
 
     public void logKeywordsLoadFailure(CommonRequestDTO commonRequestDTO, String publisher_url){
-        Date date = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-        String formattedDate = sdf.format(date);
-        logDataRepository.saveKeywordNotLoad(new LogData(Long.parseLong(commonRequestDTO.getUuid()), commonRequestDTO.getBrowser(), commonRequestDTO.getCountry(),formattedDate, commonRequestDTO.getCustomerId(), commonRequestDTO.getAdTagId(),publisher_url));
+        logDataRepository.saveKeywordNotLoad(new LogData(Long.parseLong(commonRequestDTO.getUuid()), commonRequestDTO.getBrowser(), commonRequestDTO.getCountry(),getTimeStamp(), commonRequestDTO.getCustomerId(), commonRequestDTO.getAdTagId(),publisher_url));
     }
 
     public void logAdsDisplay(String uuid,String browser, String country,String timestamp,String cid,String adTagId,String publisher_url,String[] ads,String keyword_title){
@@ -51,11 +44,16 @@ public class LogDataService
     }
 
     public void logActionSet(CommonRequestDTO commonRequestDTO, String url, HashMap<Enum ,String> finalSet, int section_id){
+
+        logDataRepository.saveAttributes(new LogData(Long.parseLong(commonRequestDTO.getUuid()), commonRequestDTO.getBrowser(), commonRequestDTO.getCountry(),getTimeStamp(), commonRequestDTO.getCustomerId(), commonRequestDTO.getAdTagId(),url),finalSet,section_id);
+
+    }
+
+    private String getTimeStamp(){
         Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         String formattedDate = sdf.format(date);
-        logDataRepository.saveAttributes(new LogData(Long.parseLong(commonRequestDTO.getUuid()), commonRequestDTO.getBrowser(), commonRequestDTO.getCountry(),formattedDate, commonRequestDTO.getCustomerId(), commonRequestDTO.getAdTagId(),url),finalSet,section_id);
-
+        return formattedDate;
     }
 
 }
