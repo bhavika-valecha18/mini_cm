@@ -1,6 +1,6 @@
 package com.mini_cm.mini_cm.service;
 
-import com.mini_cm.mini_cm.dao.EntityAttributeRepository;
+import com.mini_cm.mini_cm.dao.EntityAttributeRepositoryInterface;
 import com.mini_cm.mini_cm.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,10 +14,10 @@ import java.util.regex.Pattern;
 public class EntityService
 {
     @Autowired
-    private EntityAttributeRepository entityAttributeRepository;
+    private EntityAttributeRepositoryInterface entityAttributeRepositoryInterface;
 
     Action action=new Action();
-    HashMap<Enum,String> overrideactions=action.getAttribute();
+    HashMap<Enum,String> finalAttributeMap =action.getActionAttribute();
     CommonRequestDTO commonRequestDTO =null;
     int sectionId=0;
 
@@ -25,25 +25,26 @@ public class EntityService
     //get  attribute set from db
     private void getActionValuesFromSql(String id, PriorityLevel type,CommonRequestDTO commonRequestDTO,String author_name){
         switch (type){
-            case GLOBAL: Action global=new Action();
-                LevelObject globalAttribute=entityAttributeRepository.getActionValuesFromSql(id,type);
-                overrideAttributes(globalAttribute.getAction());
-                break;
+            case GLOBAL: AttributeObject globalAttributeObject= entityAttributeRepositoryInterface.getActionValuesFromSql(id,type);
+                         overrideAttributes(globalAttributeObject.getAction());
+                         break;
 
             case CUSTOMER:
-                        LevelObject custAttribute=entityAttributeRepository.getActionValuesFromSql(id,type);
-                        overrideAttributes(custAttribute.getAction());
+                        AttributeObject custAttributeObject= entityAttributeRepositoryInterface.getActionValuesFromSql(id,type);
+                        overrideAttributes(custAttributeObject.getAction());
                         break;
 
-            case ADTAG:LevelObject adtagAttribute=entityAttributeRepository.getActionValuesFromSql(id,type);
-                        overrideAttributes(adtagAttribute.getAction());
+            case ADTAG:
+                        AttributeObject adtagAttributeObject= entityAttributeRepositoryInterface.getActionValuesFromSql(id,type);
+                        overrideAttributes(adtagAttributeObject.getAction());
                         break;
 
-            case SECTION:LevelObject sectionAttribute=entityAttributeRepository.getActionValuesFromSql(id,type);
-                        List<Section> sections=sectionAttribute.getSection();
-                        Action section_set=new Action();
-                        section_set=finalSectionSet(commonRequestDTO,author_name,sections);
-                        overrideAttributes(section_set);
+            case SECTION:
+                        AttributeObject sectionAttributeObject= entityAttributeRepositoryInterface.getActionValuesFromSql(id,type);
+                        List<Section> sectionList=sectionAttributeObject.getSection();
+                        Action sectionAttributeSet=new Action();
+                        sectionAttributeSet=finalSectionSet(commonRequestDTO,author_name,sectionList);
+                        overrideAttributes(sectionAttributeSet);
                         break;
 
         }
@@ -55,15 +56,15 @@ public class EntityService
 
 
 
-    public HashMap<Enum,String> getFinalSet(){
-        return overrideactions;
+    public HashMap<Enum,String> getFinalAttributeSet(){
+        return finalAttributeMap;
     }
 
     public int sectionId(){
         return sectionId;
     }
 
-    public void callEntities(CommonRequestDTO commonRequestDTO, String author_name){
+    public void getActionValuesOnEntityLevel(CommonRequestDTO commonRequestDTO, String author_name){
         this.commonRequestDTO = commonRequestDTO;
 
         //fetch and override
@@ -74,9 +75,9 @@ public class EntityService
 
     }
 
-    private String getId(PriorityLevel type){
+    private String getId(PriorityLevel priorityLevelValue){
         String id="";
-        switch (type){
+        switch (priorityLevelValue){
             case CUSTOMER:id= commonRequestDTO.getCustomerId();
                 break;
             case ADTAG:id= commonRequestDTO.getAdTagId();
@@ -88,22 +89,22 @@ public class EntityService
         return id;
     }
 
-    private   Action finalSectionSet(CommonRequestDTO commonRequestDTO,String author_name,List<Section> sections)
+    private  Action finalSectionSet(CommonRequestDTO commonRequestDTO,String author_name,List<Section> sections)
     {
-        Action action = new Action();
+        Action finalSectionSet = new Action();
         boolean check;
         String country = commonRequestDTO.getCountry();
         String browser = commonRequestDTO.getBrowser();
         String device = commonRequestDTO.getDevice();
         String author = author_name;
 
-        for (Section s : sections)
+        for (Section sectionListIterator : sections)
         {
             check=true;
 
             if (country != null)
             {
-                if ( !(s.getAttribute().get(RuleSet.COUNTRY) == null || Pattern.matches(s.getAttribute().get(RuleSet.COUNTRY).toString(), country.toLowerCase())))
+                if ( !(sectionListIterator.getSectionAttributeMap().get(RuleSet.COUNTRY) == null || Pattern.matches(sectionListIterator.getSectionAttributeMap().get(RuleSet.COUNTRY).toString(), country.toLowerCase())))
                 {
                     check = false;
                     continue;
@@ -115,7 +116,7 @@ public class EntityService
             if (browser != null)
             {
 
-                if ( !(s.getAttribute().get(RuleSet.BROWSER) == null || Pattern.matches(s.getAttribute().get(RuleSet.BROWSER).toString(), browser.toLowerCase())))
+                if ( !(sectionListIterator.getSectionAttributeMap().get(RuleSet.BROWSER) == null || Pattern.matches(sectionListIterator.getSectionAttributeMap().get(RuleSet.BROWSER).toString(), browser.toLowerCase())))
                 {
                     check = false;
                     continue;
@@ -127,7 +128,7 @@ public class EntityService
             if (device != null)
             {
 
-                if ( !(s.getAttribute().get(RuleSet.DEVICE) == null || Pattern.matches(s.getAttribute().get(RuleSet.DEVICE).toString(), device.toLowerCase())))
+                if ( !(sectionListIterator.getSectionAttributeMap().get(RuleSet.DEVICE) == null || Pattern.matches(sectionListIterator.getSectionAttributeMap().get(RuleSet.DEVICE).toString(), device.toLowerCase())))
                 {
                     check = false;
                     continue;
@@ -138,7 +139,7 @@ public class EntityService
             //author
             if (author != null)
             {
-                if (!(s.getAttribute().get(RuleSet.AUTHOR_NAME) == null || Pattern.matches(s.getAttribute().get(RuleSet.AUTHOR_NAME).toString(), author.toLowerCase())))
+                if (!(sectionListIterator.getSectionAttributeMap().get(RuleSet.AUTHOR_NAME) == null || Pattern.matches(sectionListIterator.getSectionAttributeMap().get(RuleSet.AUTHOR_NAME).toString(), author.toLowerCase())))
                 {
                     check = false;
                     continue;
@@ -150,33 +151,29 @@ public class EntityService
             if (check)
             {
 
-                 sectionId = Integer.parseInt(s.getAttribute().get(SectionSet.PRIORITY));
+                 sectionId = Integer.parseInt(sectionListIterator.getSectionAttributeMap().get(SectionSet.PRIORITY));
                 for (AttributeSet i : AttributeSet.values())
                 {
-                    action.set_value_in_key(i, s.getAttribute().get(i));
+                    finalSectionSet.setValueInActionMap(i, sectionListIterator.getSectionAttributeMap().get(i));
                 }
                 break;
             }
 
         }
-
-
-
-
-        return action;
+        return finalSectionSet;
     }
 
 
-
-    private void overrideAttributes(Action obj)
+    //override attributes
+    private void overrideAttributes(Action overridingActionObject)
     {
-        if (obj != null)
+        if (overridingActionObject != null)
         {
-            for (Enum key : overrideactions.keySet())
+            for (Enum key : finalAttributeMap.keySet())
             {
-                if (obj.getAttribute().get(key) != null)
+                if (overridingActionObject.getActionAttribute().get(key) != null)
                 {
-                    overrideactions.put(key,obj.getAttribute().get(key));
+                    finalAttributeMap.put(key,overridingActionObject.getActionAttribute().get(key));
                 }
             }
         }

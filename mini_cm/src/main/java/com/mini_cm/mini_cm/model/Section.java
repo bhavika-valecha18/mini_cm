@@ -9,38 +9,38 @@ import java.util.Set;
 
 public class Section
 {
-    private HashMap<Enum,String> section=new HashMap<>();
-   private Set<Enum> s=new HashSet();
-   static AttributeSet action_set[]=AttributeSet.values();
-    RuleSet rule_set[]=RuleSet.values();
-    SectionSet set[]=SectionSet.values();
+    private HashMap<Enum,String> sectionMap =new HashMap<>();
+   private Set<Enum> sectionSet =new HashSet();
+   static AttributeSet actionSet[]=AttributeSet.values();
+    RuleSet ruleSet[]=RuleSet.values();
+    SectionSet sectionValueSet[]=SectionSet.values();
 
 
     public Section()
     {
 
         //rules
-        for(RuleSet i:rule_set)
+        for(RuleSet i: ruleSet)
         {
-            s.add(i);
-            section.put(i,null);
+            sectionSet.add(i);
+            sectionMap.put(i,null);
 
         }
 
         //actions
-        for(AttributeSet i:action_set)
+        for(AttributeSet i:actionSet)
         {
-            s.add(i);
-            section.put(i,null);
+            sectionSet.add(i);
+            sectionMap.put(i,null);
 
         }
 
         //section
-        for(SectionSet i:set)
+        for(SectionSet i: sectionValueSet)
         {
 
-            s.add(i);
-            section.put(i,null);
+            sectionSet.add(i);
+            sectionMap.put(i,null);
 
         }
 
@@ -48,22 +48,22 @@ public class Section
 
 
 
-    public void set_value_in_key(Enum key,String value){
-        this.section.put(key,value);
+    public void setValueInSectionMap(Enum key, String value){
+        this.sectionMap.put(key,value);
 
     }
 
 
-    public HashMap<Enum,String> getAttribute(){
-        HashMap<Enum,String> attribute_set=new HashMap<>();
-        attribute_set.putAll(this.section);
-        return attribute_set;
+    public HashMap<Enum,String> getSectionAttributeMap(){
+        HashMap<Enum,String> attributeSet=new HashMap<>();
+        attributeSet.putAll(this.sectionMap);
+        return attributeSet;
     }
 
     public Set<Enum> getSectionAttributeSet(){
-        Set<Enum> attribute_set=new HashSet<>();
-        attribute_set.addAll(this.s);
-        return attribute_set;
+        Set<Enum> attributeSet=new HashSet<>();
+        attributeSet.addAll(this.sectionSet);
+        return attributeSet;
     }
 
 

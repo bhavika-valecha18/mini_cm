@@ -7,29 +7,26 @@ import java.util.HashMap;
 public class Action
 {
 
-    AttributeSet set[]=AttributeSet.values();
-    private  HashMap<Enum,String> actions=new HashMap<>();
+    AttributeSet actionSet[]=AttributeSet.values();
+    private  HashMap<Enum,String> actionMap=new HashMap<>();
     public Action()
     {
-        for(AttributeSet i:set)
+        for(AttributeSet i:actionSet)
         {
-            actions.put(i,null);
+            actionMap.put(i,null);
 
         }
 
     }
 
-    public void set_value_in_key(Enum key,String value){
-        this.actions.put(key,value);
+    public void setValueInActionMap(Enum key, String value){
+        this.actionMap.put(key,value);
     }
 
-    public HashMap<Enum,String> getAttribute(){
-        HashMap<Enum,String> attribute_set=new HashMap<>();
-        attribute_set.putAll(this.actions);
-        return attribute_set;
+    public HashMap<Enum,String> getActionAttribute(){
+        HashMap<Enum,String> attributeSet=new HashMap<>();
+        attributeSet.putAll(this.actionMap);
+        return attributeSet;
     }
-
-
-
 
 }

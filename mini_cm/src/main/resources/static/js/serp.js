@@ -1,5 +1,6 @@
 
-let custId="";
+let custId="f4545";
+let adtagid="f1898";
  //browser
  navigator.browserSpecs = (function()
 { var ua = navigator.userAgent,
@@ -18,7 +19,7 @@ window.addEventListener("load",adsScript);
 
  function adsScript(){
 
-           custId=document.querySelector('media-net').getAttribute('cid');
+
            let keyword=document.getElementById("keyword").innerHTML;
            let arr=keyword.split(" ");
            let key=arr[2].split(":")[1];
@@ -44,7 +45,7 @@ window.addEventListener("load",adsScript);
                        country:country,
                       timestamp:getTimestamp(),
                         cid:custId,
-                        adTagId:"f1898",
+                        adTagId:adtagid,
                         publisher_url:publisher_url
 
                       };
@@ -71,7 +72,7 @@ window.addEventListener("load",adsScript);
          let title=a.innerHTML;
          let t=`${title}`;
 
-           let keyword=document.getElementById("keyword").innerHTML;
+          let keyword=document.getElementById("keyword").innerHTML;
           let arr=keyword.split(" ");
           let key=arr[2].split(":")[1];
 
@@ -80,12 +81,11 @@ window.addEventListener("load",adsScript);
 
           let time=getTimestamp();
 
-            let country="india";
-            let cid=custId;
-            let adTagId="f1898";
-             let publisher_url=document.getElementById("link_url").innerHTML;
 
-           let url=`http://localhost:8080/adClickData?uuid=${uuid}&keyword=${key}&adUrl=${adUrl}&timestamp=${time}&country=${country}&browser=${browser}&adTitle=${t}&cid=${cid}&adTagId=${adTagId}&publisher_url=${publisher_url}`;
+
+           let publisher_url=document.getElementById("link_url").innerHTML;
+
+           let url=`http://localhost:8080/adClickData?uuid=${uuid}&keyword=${key}&adUrl=${adUrl}&timestamp=${time}&country=${country}&browser=${browser}&adTitle=${t}&cid=${custId}&adTagId=${adtagid}&publisher_url=${publisher_url}`;
 
 
             fetch(url, {mode: 'cors'})

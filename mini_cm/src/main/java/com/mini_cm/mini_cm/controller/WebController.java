@@ -2,10 +2,10 @@ package com.mini_cm.mini_cm.controller;
 
 
 import com.mini_cm.mini_cm.model.CommonRequestDTO;
-import com.mini_cm.mini_cm.model.Data;
+import com.mini_cm.mini_cm.model.KbbRequestData;
 import com.mini_cm.mini_cm.model.RequestQueryParams;
 import com.mini_cm.mini_cm.service.LogDataService;
-import com.mini_cm.mini_cm.service.PubKeywordsAttributesStitchingService;
+import com.mini_cm.mini_cm.service.KbbHTMLResponseService;
 import com.mini_cm.mini_cm.service.ResponseDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -26,7 +26,7 @@ public class WebController
     private LogDataService logDataService;
 
     @Autowired
-    private PubKeywordsAttributesStitchingService pubKeywordsAttributesStitchingService;
+    private KbbHTMLResponseService kbbHTMLResponseService;
 
     final String URL="rurl";
     final String SESSION_ID="cookie";
@@ -56,7 +56,7 @@ public class WebController
         model.addAttribute(KEYWORD_SELECTED,params.getKeyword());
         try
         {
-            model.addAttribute(LISTING_ADS, responseDataService.getSerpData());
+            model.addAttribute(LISTING_ADS, responseDataService.getSerpResponseData());
         }catch (Exception e){
             System.out.println(e);
         }
@@ -68,8 +68,9 @@ public class WebController
     //request to kbb
     @PostMapping(value = "/data", produces = MediaType.TEXT_HTML_VALUE)
     @ResponseBody
-    public  String  responseKeyword(@RequestBody Data data){
-        return pubKeywordsAttributesStitchingService.finalResponseLogging(data, commonRequestDTO);
+    public  String  responseKeyword(@RequestBody KbbRequestData kbbRequestData){
+
+        return kbbHTMLResponseService.getHTMLResponse(kbbRequestData, commonRequestDTO);
 
     }
 

@@ -19,33 +19,4 @@ private String customerId;
     private String adTagId;
     private String device;
 
-    @Override
-    public String toString()
-    {
-        return "CommonRequestDTO{" +
-                "customerId='" + customerId + '\'' +
-                ", browser='" + browser + '\'' +
-                ", country='" + country + '\'' +
-                ", uuid='" + uuid + '\'' +
-                ", adTagId='" + adTagId + '\'' +
-                ", device='" + device + '\'' +
-                '}';
-    }
-//   private HashMap<Enum,String> requestDTO=new HashMap<>();
-//
-//    public CommonRequestDTO(){
-//        for(CommonRequestDataSet params:CommonRequestDataSet.values())   {
-//            requestDTO.put(params,null);
-//        }
-//    }
-//
-//    public void getRequestData(){
-//        HashMap<Enum,String> resultSet=new HashMap<>();
-//        resultSet.putAll(this.requestDTO);
-//    }
-//
-//    public  void set_key_in_value(Enum key,String value){
-//        requestDTO.put(key,value);
-//    }
-
 }
