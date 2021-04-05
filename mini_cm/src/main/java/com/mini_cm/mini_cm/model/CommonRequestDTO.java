@@ -19,4 +19,6 @@ private String customerId;
     private String adTagId;
     private String device;
 
+
+
 }

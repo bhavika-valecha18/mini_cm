@@ -63,7 +63,7 @@ public class LogDataRepository implements LogDataRepositoryInterface
     @Override
     public void saveAds(LogData logData, String adTitle, String keyword)
     {
-        jdbcTemplate.update(INSERT_ADS_DISPLAY, logData.getUuid(), adTitle, keyword, logData.getBrowser(), logData.getCountry(), logData.getTimestamp().toString(), logData.getCid(), logData.getAd_tag_id(), logData.getPublisher_url());
+        jdbcTemplate.update(INSERT_ADS_DISPLAY, logData.getUuid(), adTitle, keyword,  logData.getCountry(),logData.getBrowser(), logData.getTimestamp().toString(), logData.getCid(), logData.getAd_tag_id(), logData.getPublisher_url());
     }
 
     @Override

@@ -88,7 +88,7 @@ public class KbbHTMLResponseService
         String htmlResponse=keywordBoxDivElement+headingElement+listElement;
         for(String keyword:keywords){
 
-            String requestUrl="http://localhost:8080//keywordsClicked?uuid="+commonRequestDTO.getUuid()+"&keyword="+keyword.replace(" ","-")+"&country="+commonRequestDTO.getCountry()+"&adTagId="+commonRequestDTO.getAdTagId()+"&browser="+commonRequestDTO.getBrowser()+"&cid="+commonRequestDTO.getCustomerId()+"&publisher_url="+rurl;
+            String requestUrl="http://localhost:8080//serpPageRedirect?uuid="+commonRequestDTO.getUuid()+"&keyword="+keyword.replace(" ","-")+"&country="+commonRequestDTO.getCountry()+"&adTagId="+commonRequestDTO.getAdTagId()+"&browser="+commonRequestDTO.getBrowser()+"&cid="+commonRequestDTO.getCustomerId()+"&publisher_url="+rurl;
             htmlResponse+="<li>"+"<a "+"href="+'"'+requestUrl+'"'+" target="+'"'+"_blank"+'"'+" >"+keyword+"</a></li>\n";
         }
         htmlResponse+=" </ul>\n</div>\n";

@@ -15,16 +15,15 @@ public class RequestQueryParams
     private String keyword;
     private String country;
     private String adTagId;
-    private String browser;
     private String cid;
     private String publisher_url;
-    private String auditKey;
+    private int auditKey;
     private int viewability;
     private String timestamp;
     private String[] adsDisplay;
-    private String device;
     private String adUrl;
     private String adTitle;
+    private String userAgent;
 
 
 }
