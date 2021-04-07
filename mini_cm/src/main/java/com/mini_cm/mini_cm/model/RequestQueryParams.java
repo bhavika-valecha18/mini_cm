@@ -25,5 +25,4 @@ public class RequestQueryParams
     private String adTitle;
     private String userAgent;
 
-
 }

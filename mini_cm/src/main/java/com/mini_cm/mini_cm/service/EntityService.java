@@ -22,6 +22,20 @@ public class EntityService
     int sectionId=0;
 
 
+
+    public void getActionValuesOnEntityLevel(CommonRequestDTO commonRequestDTO, String author_name){
+        this.commonRequestDTO = commonRequestDTO;
+
+        //fetch and override
+        for(Integer priority:PriorityLevel.getPriorityLevelName.keySet()){
+            //here since retrieving action values from diff priorities is independent,so multithreading can be use !
+            PriorityLevel type=PriorityLevel.getPriorityLevelName.get(priority);
+            getActionValuesFromSql(getId(type),type,commonRequestDTO,author_name);
+        }
+
+    }
+
+
     //get  attribute set from db
     private void getActionValuesFromSql(String id, PriorityLevel type,CommonRequestDTO commonRequestDTO,String author_name){
         switch (type){
@@ -52,28 +66,6 @@ public class EntityService
 
     }
 
-
-
-
-
-    public HashMap<Enum,String> getFinalAttributeSet(){
-        return finalAttributeMap;
-    }
-
-    public int sectionId(){
-        return sectionId;
-    }
-
-    public void getActionValuesOnEntityLevel(CommonRequestDTO commonRequestDTO, String author_name){
-        this.commonRequestDTO = commonRequestDTO;
-
-        //fetch and override
-        for(Integer priority:PriorityLevel.getPriorityLevelName.keySet()){
-            PriorityLevel type=PriorityLevel.getPriorityLevelName.get(priority);
-            getActionValuesFromSql(getId(type),type,commonRequestDTO,author_name);
-        }
-
-    }
 
     private String getId(PriorityLevel priorityLevelValue){
         String id="";
@@ -177,6 +169,14 @@ public class EntityService
                 }
             }
         }
+    }
+
+    public HashMap<Enum,String> getFinalAttributeSet(){
+        return finalAttributeMap;
+    }
+
+    public int sectionId(){
+        return sectionId;
     }
 
 

@@ -5,7 +5,7 @@ import com.mini_cm.mini_cm.model.CommonRequestDTO;
 import com.mini_cm.mini_cm.model.KbbRequestData;
 import com.mini_cm.mini_cm.model.RequestQueryParams;
 import com.mini_cm.mini_cm.model.SerpLogAndDisplay;
-import com.mini_cm.mini_cm.service.KbbHTMLResponseService;
+import com.mini_cm.mini_cm.service.KbbResponseService;
 import com.mini_cm.mini_cm.service.LogDataService;
 import com.mini_cm.mini_cm.service.ResponseDataService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.websocket.server.PathParam;
 
 @Controller
@@ -27,7 +26,7 @@ public class WebController
     private LogDataService logDataService;
 
     @Autowired
-    private KbbHTMLResponseService kbbHTMLResponseService;
+    private KbbResponseService kbbResponseService;
 
 
 
@@ -39,23 +38,16 @@ public class WebController
         return "static/js/index.js";
     }
 
-    @GetMapping(value = "/adTagId{cid}")
-    @ResponseBody
-    public String getAdtagId(@PathParam("cid") String cid){
-        //bidding process
-        return "f1898";
-    }
 
     @GetMapping(value="/log")
-    public @ResponseBody void logData(@ModelAttribute RequestQueryParams params,HttpServletRequest request)
+    public @ResponseBody void logData(@ModelAttribute RequestQueryParams params)
     {
-
-
         switch (params.getAuditKey()){
             case 0:
 
                 logDataService.logPageView(params.getUuid(),params.getCountry(),params.getTimestamp(),params.getCid(),params.getAdTagId(),params.getPublisher_url(),params.getViewability(),params.getKeyword(),params.getUserAgent());
                 commonRequestDTO =new CommonRequestDTO(params.getCid(),logDataService.getBrowser(params.getUserAgent()),params.getCountry(),params.getUuid(),params.getAdTagId(), logDataService.getDevice(params.getUserAgent()));
+
                 break;
 
             case 1:
@@ -70,12 +62,13 @@ public class WebController
     @PostMapping(value = "/kbbRequest", produces = MediaType.TEXT_HTML_VALUE)
     @ResponseBody
     public  String getKbbResponse(@RequestBody KbbRequestData kbbRequestData){
-        return kbbHTMLResponseService.getHTMLResponse(kbbRequestData, commonRequestDTO);
+
+        return kbbResponseService.getHTMLResponse(kbbRequestData, commonRequestDTO);
     }
 
     //on keyword click
     @GetMapping(value ="/serpPageRedirect")
-    public String serpPageRedirect(@ModelAttribute RequestQueryParams params) {
+    public String serpPageRedirect(@ModelAttribute RequestQueryParams params){
         logDataService.logKeywordClick(params.getUuid(),params.getCountry(),params.getCid(),params.getAdTagId(),params.getPublisher_url(),params.getKeyword());
         return "redirect:/ads?uuid="+params.getUuid()+"&keyword="+params.getKeyword()+"&publisher_url="+params.getPublisher_url();
     }

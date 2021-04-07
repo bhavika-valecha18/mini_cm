@@ -85,7 +85,7 @@ function adClick(a) {
 //get timestamp
 function getTimestamp() {
     let date = new Date();
-    let dateString = date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate();
+    let dateString = date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate();
     let timeString = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
     timestamp = dateString + " " + timeString;
     return timestamp;

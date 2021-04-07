@@ -117,7 +117,7 @@ public class LogDataService
 
         } else if (user.contains("firefox"))
         {
-            browser=(userAgent.substring(userAgent.indexOf("Firefox")).split(" ")[0]).replace("/", "-");
+            browser=(userAgent.substring(userAgent.indexOf("Firefox")).split(" ")[0]).replace("/", "-").substring(0,7);
         } else if(user.contains("rv"))
         {
             browser="IE-" + user.substring(user.indexOf("rv") + 3, user.indexOf(")"));

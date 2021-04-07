@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 @Service
-public class KbbHTMLResponseService
+public class KbbResponseService
 {
     @Autowired
     private ResponseDataService responseDataService;
@@ -26,6 +26,8 @@ public class KbbHTMLResponseService
 
     public String getHTMLResponse(KbbRequestData kbbRequestData, CommonRequestDTO commonRequestDTO){
 
+        //final Attribute set can be cached with rule set as its key
+
         //override
         entityService.getActionValuesOnEntityLevel(commonRequestDTO, kbbRequestData.getAuthor());
         try{
@@ -34,7 +36,9 @@ public class KbbHTMLResponseService
             kbbResponse= responseDataService.getKbbResponseData(kbbRequestData,attributeResultSet.get(AttributeSet.LID));
 
             //list of keywords
+
            ArrayList<String> keywordList=getKeywordList(kbbResponse,attributeResultSet);
+
            String result= HTMLResponse(keywordList,commonRequestDTO, kbbRequestData.getRurl(),attributeResultSet.get(AttributeSet.BACKGROUND_COLOR),attributeResultSet.get(AttributeSet.FONT_NAME),attributeResultSet.get(AttributeSet.FONT_STYLE));
 
            //log attribute set

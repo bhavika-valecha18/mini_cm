@@ -2,8 +2,8 @@
 let keywordBoxViewability = true;
 let keywordsList = [];
 let keywordsDisplay = false;
-let custId = "";
-let adtagid = "";
+let custId = "f4545";
+let adtagid = "f1898";
 let country = "india";
 let metaInfo = {};
 //onload
@@ -12,21 +12,11 @@ window.addEventListener("load", adScript);
 
 function adScript() {
 
-    //add custom tag for adtagid
-
-    createMedianetAdTag();
-    //fetch adtag id
-    fetchAdtagId();
-
-    //fetch all data from meta tag
-
+   //fetch all data from meta tag
     fetchMetaInfo();
 
     //set cookie for user
     checkCookie();
-
-
-
 
     var logData = {
         uuid: getCookie("uuid"),
@@ -37,15 +27,15 @@ function adScript() {
         adTagId: adtagid || "f1898",
         viewability: 0,
         keyword: "",
-        userAgent: navigator.userAgent
+        userAgent: getUserAgent()
     };
 
     //log user details,fire pixel 1
     firePixel(logData, 0);
 
+
     //call to server
     requestToKbb();
-
 
     $(window).bind("scroll", function () {
 
@@ -63,33 +53,6 @@ function adScript() {
         }
     });
 }//end of adScript
-
-
-//create media-net adtag
-function createMedianetAdTag() {
-    class Medianet extends HTMLElement {
-        constructor() {
-            super();
-        }
-    }
-    customElements.define('media-net', Medianet);
-    custId = document.querySelector('media-net').getAttribute('cid');
-}
-
-//fetch adtagid's from custom tag
-function fetchAdtagId() {
-    fetch('http://localhost:8080/adTagId?cid=' + custId, { mode: 'cors' })
-        .then(function (response) {
-            return response.text();
-        })
-        .then(function (text) {
-            document.querySelector('media-net').setAttribute('adtagid', text);
-            adtagid = text;
-        })
-        .catch(function (error) {
-            console.log(error);
-        });
-}
 
 
 //fetch info from meta tag
@@ -144,6 +107,7 @@ function displayKeywords(kbbData) {
 
     let adBox = document.getElementById("ad-box");
     adBox.innerHTML = kbbData;
+
     let ulElement = document.getElementById("ad-elements");
     let listLength = ulElement.getElementsByTagName('li').length;
     let keywordContent = ulElement.getElementsByTagName('li');
@@ -194,7 +158,7 @@ function checkCookie() {
 
 function getTimestamp() {
     let date = new Date();
-    let dateString = date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate();
+    let dateString = date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate();
     let timeString = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
     timestamp = dateString + " " + timeString;
     return timestamp;
@@ -206,6 +170,11 @@ function firePixel(obj, audit_key) {
         srcUrl += "&" + key + "=" + obj[key];
     }
     new Image().src = srcUrl;
+}
+
+function getUserAgent(){
+let userAgent=navigator.userAgent;
+return userAgent;
 }
 
 
